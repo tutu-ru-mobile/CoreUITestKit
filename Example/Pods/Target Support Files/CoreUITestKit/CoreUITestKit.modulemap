@@ -1,0 +1,6 @@
+framework module CoreUITestKit {
+  umbrella header "CoreUITestKit-umbrella.h"
+
+  export *
+  module * { export * }
+}
