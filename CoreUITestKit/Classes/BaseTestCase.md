@@ -11,6 +11,7 @@ class BaseTestCase: XCTestCase {
         app.launchArguments += ["-AppleLanguages", "(ru)"]
         app.launchArguments += ["-AppleLocale", "ru_RU"]
         app.launchEnvironment = ["isUITest": "yes"]
+        continueAfterFailure = false
         feature("<Some solution> IOS autotest")
     }
     
