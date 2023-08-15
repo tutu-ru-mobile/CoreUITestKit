@@ -31,7 +31,8 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '10.0'
 
   s.source_files = 'CoreUITestKit/Classes/**/*'
-  
+  s.frameworks = 'XCTest'
+
   # s.resource_bundles = {
   #   'CoreUITestKit' => ['CoreUITestKit/Assets/*.png']
   # }
