@@ -13,5 +13,8 @@ let package = Package(
     .library(
       name: "CoreUITestKit",
       targets: ["CoreUITestKit"]),
+  ],
+  targets: [
+    .target(name: "CoreUITestKit")
   ]
 )
