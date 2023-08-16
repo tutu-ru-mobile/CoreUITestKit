@@ -35,7 +35,7 @@ extension XCUIElement {
     }
     
     /// Определяет установлен ли FirstResponder у конкретного элемента. Применимо для текстфилда
-    func dsl_hasFocus() -> Bool {
+    public func dsl_hasFocus() -> Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Определение установлен ли фокус у элемента \(String(describing: resourceName))") { _ in
             return (value(forKey: "hasKeyboardFocus") as? Bool) ?? false
@@ -63,14 +63,14 @@ extension XCUIElement {
     }
     
     @discardableResult
-    func dsl_waitForExistence(timeout: Double) -> Bool {
+    public func dsl_waitForExistence(timeout: Double) -> Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Ожидание элемента \(String(describing: resourceName))") { _ in
             return waitForExistence(timeout: timeout)
         }
     }
     
-    func dsl_typeText(_ text: String) {
+    public func dsl_typeText(_ text: String) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Ввод текста \(text) в \(String(describing: resourceName))") { _ in
             guard dsl_isHittable else {
@@ -81,7 +81,7 @@ extension XCUIElement {
         }
     }
     
-    func dsl_tap() {
+    public func dsl_tap() {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName))") { _ in
             guard dsl_isHittable else {
@@ -94,7 +94,7 @@ extension XCUIElement {
         }
     }
     
-    func dsl_doubleTap() {
+    public func dsl_doubleTap() {
         let resourceName = self.description
         XCTContext.runActivity(named: "Двойной Тап по элементу \(String(describing: resourceName))") { _ in
             guard dsl_isHittable else {
@@ -108,7 +108,7 @@ extension XCUIElement {
     }
     
     /// Стандартный свайп
-    func dsl_swipe(_ direction: Direction) {
+    public func dsl_swipe(_ direction: Direction) {
         switch direction {
         case .up:
             XCTContext.runActivity(named: "Свайп вверх") { _ in
@@ -130,7 +130,7 @@ extension XCUIElement {
     }
     
     /// Свайп n-раз
-    func dsl_swipe(_ direction: Direction, _ times: Int, velocity: XCUIGestureVelocity = .default ) {
+    public func dsl_swipe(_ direction: Direction, _ times: Int, velocity: XCUIGestureVelocity = .default ) {
         switch direction {
         case .up:
             XCTContext.runActivity(named: "Свайп вверх \(times) раз") { _ in
@@ -160,7 +160,7 @@ extension XCUIElement {
     }
     
     /// открывыет диплинк из Сафари браузера
-    func dsl_openDeeplink(deeplink: String) {
+    public func dsl_openDeeplink(deeplink: String) {
         XCTContext.runActivity(named: "Открытие диплинка '\(String(describing: deeplink))' через Safari браузер") { _ in
             let safari = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
             safari.launch()
@@ -178,7 +178,7 @@ extension XCUIElement {
     }
     
     /// Очищает текст в текстовом поле через вставку пустого текста
-    func dsl_clearText() {
+    public func dsl_clearText() {
         let resourceName = self.description
         XCTContext.runActivity(named: "Очистка текста в элементе \(String(describing: resourceName))") { _ in
             guard let stringValue = self.stringValue else { return }
@@ -191,7 +191,7 @@ extension XCUIElement {
     }
 
     /// Очищает поле и вставляет новый текст в текстовое поле через буфер
-    func dsl_setText(text: String, needDoubleTap: Bool = true) {
+    public func dsl_setText(text: String, needDoubleTap: Bool = true) {
         let app = XCUIApplication()
         let resourceName = self.description
         XCTContext.runActivity(named: "Очищает поле и вставляет новый текст в текстовое поле \(String(describing: resourceName))") { _ in
@@ -221,7 +221,7 @@ extension XCUIElement {
     }
     
     /// ввод текста через клавиатуру устройства
-    func dsl_typeTextFromKeyboard(text: String, keyboardLayout: XCUIElement.KeyboardLayout) {
+    public func dsl_typeTextFromKeyboard(text: String, keyboardLayout: XCUIElement.KeyboardLayout) {
         XCTContext.runActivity(named: "Ввод текста '\(String(describing: text))' через клавиатуру") {  _ in
             let app = XCUIApplication()
             dsl_tap()
@@ -246,7 +246,7 @@ extension XCUIElement {
     }
     
     /// Удаление текста через клавиатуру устройства
-    func dsl_clearTextFromKeyboard() {
+    public func dsl_clearTextFromKeyboard() {
         let resourceName = self.description
         let app = XCUIApplication()
         XCTContext.runActivity(named: "Удаление текста '\(String(describing: resourceName))' через клавиатуру") {  _ in

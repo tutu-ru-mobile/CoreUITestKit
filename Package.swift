@@ -15,6 +15,7 @@ let package = Package(
       targets: ["CoreUITestKit"]),
   ],
   targets: [
-    .target(name: "CoreUITestKit")
+    .target(
+      name: "CoreUITestKit")
   ]
 )
