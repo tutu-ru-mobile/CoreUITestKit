@@ -16,7 +16,6 @@
 5. Выбираем нужный проект
 
 6. Нажимаем "Add package"
-<img width="672" alt="image" src="https://github.com/tutu-ru-mobile/CoreUITestKit/assets/102799757/c8ce015e-3aca-4d8b-8a6b-f8ca06cd9eb7">
 
 7. Фреймворк всегда добавляем только для таргета UI-тестов
 <img width="672" alt="image" src="https://github.com/tutu-ru-mobile/CoreUITestKit/assets/102799757/e1fa2988-f596-421f-8a67-e3e5b931ef62">
