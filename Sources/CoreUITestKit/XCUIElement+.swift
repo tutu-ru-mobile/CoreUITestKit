@@ -70,22 +70,28 @@ extension XCUIElement {
         }
     }
     
-    public func dsl_typeText(_ text: String) {
+    public func dsl_typeText(_ text: String, file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Ввод текста \(text) в \(String(describing: resourceName))") { _ in
             guard dsl_isHittable else {
-                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия")
+                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия",
+                file: file,
+                line: line
+                )
                 return
             }
             typeText(text)
         }
     }
     
-    public func dsl_tap() {
+    public func dsl_tap(file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName))") { _ in
             guard dsl_isHittable else {
-                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия")
+                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия",
+                file: file,
+                line: line
+                )
                 return
             }
             XCTContext.runActivity(named: "Тап") { _ in
@@ -94,11 +100,14 @@ extension XCUIElement {
         }
     }
     
-    public func dsl_doubleTap() {
+    public func dsl_doubleTap(file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Двойной Тап по элементу \(String(describing: resourceName))") { _ in
             guard dsl_isHittable else {
-                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия")
+                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия",
+                file: file,
+                line: line
+                )
                 return
             }
             XCTContext.runActivity(named: "Тап") { _ in
@@ -246,13 +255,16 @@ extension XCUIElement {
     }
     
     /// Удаление текста через клавиатуру устройства
-    public func dsl_clearTextFromKeyboard() {
+    public func dsl_clearTextFromKeyboard(file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         let app = XCUIApplication()
         XCTContext.runActivity(named: "Удаление текста '\(String(describing: resourceName))' через клавиатуру") {  _ in
             tap()
             guard let stringValue = value as? String else {
-                XCTFail("Tried to clear and enter text into a non string value!")
+                XCTFail("Tried to clear and enter text into a non string value!",
+                file: file,
+                line: line
+                )
                 return
             }
             let isNotEmptyValue = !stringValue.isEmpty
