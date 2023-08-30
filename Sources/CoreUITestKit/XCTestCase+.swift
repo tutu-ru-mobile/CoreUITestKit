@@ -3,11 +3,13 @@ import Foundation
 import XCTest
 
 extension XCTestCase {
-    public func dsl_XCTAssertTrue(XCUIElement: XCUIElement, action: XCUIElement.Action, errorMassage: @autoclosure () -> String) {
+    public func dsl_XCTAssertTrue(XCUIElement: XCUIElement, action: XCUIElement.Action, errorMassage: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
         XCTContext.runActivity(named: "Проверка элемента '\(XCUIElement)' на \(action.self)" ) { _ in
             XCTAssertTrue(
                 XCUIElement.checkAction(action),
-                errorMassage()
+                errorMassage(),
+                file: file,
+                line: line
             )
         }
     }
