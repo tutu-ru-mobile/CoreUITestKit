@@ -25,11 +25,12 @@ extension XCTestCase {
         }
     }
 
-    public func dsl_XCTAssertEqual<T: Equatable>(expression1: T, expression2: T, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_XCTAssertEqual<T: Equatable>(expression1: T, expression2: T, errorMassage: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
         XCTContext.runActivity(named: "Проверить значение \(expression1) на равенство с \(expression2)") { _ in
             XCTAssertEqual(
                 expression1,
                 expression2,
+                errorMassage,
                 file: file,
                 line: line
             )
