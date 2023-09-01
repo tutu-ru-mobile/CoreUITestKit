@@ -30,7 +30,7 @@ extension XCTestCase {
             XCTAssertEqual(
                 expression1,
                 expression2,
-                errorMassage,
+                errorMassage(),
                 file: file,
                 line: line
             )
