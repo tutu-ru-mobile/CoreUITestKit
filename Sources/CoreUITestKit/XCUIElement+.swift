@@ -33,6 +33,20 @@ extension XCUIElement {
             return isSelected
         }
     }
+
+    var dsl_label: String {
+        let resourceName = self.description
+        return XCTContext.runActivity(named: "Получить лэйбл элемента '\(String(describing: resourceName))'") { _ in
+            return self.label
+        }
+    }
+    
+    var dsl_placeholderValue: String? {
+        let resourceName = self.description
+        return XCTContext.runActivity(named: "Получить плейсхолдер элемента '\(String(describing: resourceName))'") { _ in
+            return self.placeholderValue
+        }
+    }
     
     /// Определяет установлен ли FirstResponder у конкретного элемента. Применимо для текстфилда
     public func dsl_hasFocus() -> Bool {
