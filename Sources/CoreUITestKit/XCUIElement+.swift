@@ -2,7 +2,7 @@
 import XCTest
 
 extension XCUIElement {
-    var stringValue: String? {
+    public var stringValue: String? {
         self.value as? String
     }
     
