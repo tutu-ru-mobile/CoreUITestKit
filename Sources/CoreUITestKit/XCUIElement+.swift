@@ -3,7 +3,10 @@ import XCTest
 
 extension XCUIElement {
     public var stringValue: String? {
-        self.value as? String
+        let resourceName = self.description
+        return XCTContext.runActivity(named: "Получить значение элемента '\(String(describing: resourceName))'") { _ in
+            return self.value as? String
+        }
     }
     
     var dsl_exists: Bool {
