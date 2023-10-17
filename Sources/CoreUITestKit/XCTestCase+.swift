@@ -36,4 +36,16 @@ extension XCTestCase {
             )
         }
     }
+    
+    public func dsl_XCTAssertNotEqual<T: Equatable>(expression1: T, expression2: T, errorMessage: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
+        XCTContext.runActivity(named: "Проверить значение \(expression1) на неравенство с  \(expression2)") { _ in
+            XCTAssertNotEqual(
+                expression1,
+                expression2,
+                errorMessage(),
+                file: file,
+                line: line
+            )
+        }
+    }
 }

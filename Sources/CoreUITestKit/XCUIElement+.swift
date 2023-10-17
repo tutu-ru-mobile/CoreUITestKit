@@ -2,13 +2,6 @@
 import XCTest
 
 extension XCUIElement {
-    public var stringValue: String? {
-        let resourceName = self.description
-        return XCTContext.runActivity(named: "Получить значение элемента '\(String(describing: resourceName))'") { _ in
-            return self.value as? String
-        }
-    }
-    
     var dsl_exists: Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Проверка элемента \(String(describing: resourceName)) на отображение") { _ in
@@ -36,6 +29,13 @@ extension XCUIElement {
             return isSelected
         }
     }
+    
+    public var stringValue: String? {
+        let resourceName = self.description
+        return XCTContext.runActivity(named: "Получить значение элемента '\(String(describing: resourceName))'") { _ in
+            return self.value as? String
+        }
+    }
 
     public var dsl_label: String {
         let resourceName = self.description
@@ -56,6 +56,22 @@ extension XCUIElement {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Определение установлен ли фокус у элемента \(String(describing: resourceName))") { _ in
             return (value(forKey: "hasKeyboardFocus") as? Bool) ?? false
+        }
+    }
+    
+    /// Выбор  элемента по тексту в пикере
+    public func dsl_adjust(toPickerWheelValue: String, file: StaticString = #file, line: UInt = #line) {
+        let resourceName = self.description
+        XCTContext.runActivity(named: "Тап по тексту '\(toPickerWheelValue)' в  елементе \(String(describing: resourceName))") { _ in
+            adjust(toPickerWheelValue: toPickerWheelValue)
+        }
+    }
+    
+    ///  Тап по notHittable элементу
+    public func forceTap(file: StaticString = #file, line: UInt = #line) {
+        let resourceName = self.description
+        XCTContext.runActivity(named: "Тап по скрытому элементу \(String(describing: resourceName))") { _ in
+            tap()
         }
     }
     
