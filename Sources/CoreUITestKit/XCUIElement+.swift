@@ -380,7 +380,7 @@ extension XCUIElement {
             return dsl_waitForExistence(timeout: 5)
         case .waitForHidden:
             return dsl_waitForHidden(timeout: 5)
-        case .waitForExistence:
+        case .waitForHittable:
             return dsl_waitForHittable(timeout: 5)
         }
     }
