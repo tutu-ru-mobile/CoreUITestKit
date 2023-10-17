@@ -96,7 +96,7 @@ extension XCUIElement {
     }
     
     @discardableResult
-    func dsl_waitForHidden(timeout: Double) -> Bool {
+    public func dsl_waitForHidden(timeout: Double) -> Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Подождать, пока элемент \(String(describing: resourceName)) не скроется") { _ in
             let expectation = XCTNSPredicateExpectation(
@@ -110,7 +110,7 @@ extension XCUIElement {
     }
     
     @discardableResult
-    func dsl_waitForHittable(timeout: Double) -> Bool {
+    public func dsl_waitForHittable(timeout: Double) -> Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Подождать, пока элемент \(String(describing: resourceName)) станет кликабельным") { _ in
             let expectation = XCTNSPredicateExpectation(
