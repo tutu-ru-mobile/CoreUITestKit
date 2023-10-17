@@ -67,14 +67,6 @@ extension XCUIElement {
         }
     }
     
-    ///  Тап по notHittable элементу
-    public func forceTap(file: StaticString = #file, line: UInt = #line) {
-        let resourceName = self.description
-        XCTContext.runActivity(named: "Тап по скрытому элементу \(String(describing: resourceName))") { _ in
-            tap()
-        }
-    }
-    
     /// Выбор раскладки клавиатуры устройства
     public func dsl_selectKeyboardLayout(_ keyboardLayout: KeyboardLayout) -> XCUIElement {
         switch keyboardLayout {
@@ -100,6 +92,34 @@ extension XCUIElement {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Ожидание элемента \(String(describing: resourceName))") { _ in
             return waitForExistence(timeout: timeout)
+        }
+    }
+    
+    @discardableResult
+    public func dsl_waitForHidden(timeout: Double) -> Bool {
+        let resourceName = self.description
+        return XCTContext.runActivity(named: "Подождать, пока элемент \(String(describing: resourceName)) не скроется") { _ in
+            let expectation = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "exists == false"),
+                object: self
+            )
+            let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+            let checkHidden = !self.dsl_exists  result == .completed
+            return checkHidden
+        }
+    }
+    
+    @discardableResult
+    public func dsl_waitForHittable(timeout: Double) -> Bool {
+        let resourceName = self.description
+        return XCTContext.runActivity(named: "Подождать, пока элемент \(String(describing: resourceName)) станет кликабельным") { _ in
+            let expectation = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "isHittable == true"),
+                object: self
+            )
+            let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+            let checkHittable = !self.dsl_isHittable  result == .completed
+            return checkHittable
         }
     }
     
@@ -146,6 +166,14 @@ extension XCUIElement {
             XCTContext.runActivity(named: "Тап") { _ in
                 doubleTap()
             }
+        }
+    }
+    
+    ///  Тап по notHittable элементу
+    public func dsl_forceTap(file: StaticString = #file, line: UInt = #line) {
+        let resourceName = self.description
+        XCTContext.runActivity(named: "Тап по скрытому элементу \(String(describing: resourceName))") { _ in
+            tap()
         }
     }
     
@@ -329,8 +357,10 @@ extension XCUIElement {
         case isHittable
         case isEnabled
         case isSelected
-        case waitForExistence
         case hasFocus
+        case waitForExistence
+        case waitForHidden
+        case waitForHittable
     }
 
     
@@ -347,7 +377,11 @@ extension XCUIElement {
         case .hasFocus:
             return dsl_hasFocus()
         case .waitForExistence:
-            return dsl_waitForExistence(timeout: 3)
+            return dsl_waitForExistence(timeout: 5)
+        case .waitForHidden:
+            return dsl_waitForHidden(timeout: 5)
+        case .waitForHittable:
+            return dsl_waitForHittable(timeout: 5)
         }
     }
 }
