@@ -13,6 +13,10 @@ extension XCTestCase {
         label(name: "story", values: stories)
         deviceInfo()
     }
+    
+    public func tag(_ tag: String...) {
+        label(name: "tag", values: tag)
+    }
 
     /// В эту обертку заворачиваем логические блоки в тесте
     public func step(_ name: String, step: () -> Void) {
