@@ -104,7 +104,7 @@ extension XCUIElement {
                 object: self
             )
             let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
-            let checkHidden = !self.dsl_exists  result == .completed
+            let checkHidden = !self.dsl_exists || result == .completed
             return checkHidden
         }
     }
@@ -118,7 +118,7 @@ extension XCUIElement {
                 object: self
             )
             let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
-            let checkHittable = !self.dsl_isHittable  result == .completed
+            let checkHittable = !self.dsl_isHittable || result == .completed
             return checkHittable
         }
     }
