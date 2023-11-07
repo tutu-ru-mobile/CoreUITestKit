@@ -20,6 +20,9 @@ let package = Package(
   ]
   dependencies: [
     .package(
+        url: "https://github.com/tutu-ru-mobile/CoreUITestKit",
+        from: "0.0.2"
+    )
       url: "https://github.com/tutu-ru-mobile/CoreUITestKit", from: "0.0.2")
   ]
 )
