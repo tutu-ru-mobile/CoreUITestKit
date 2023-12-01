@@ -358,6 +358,27 @@ extension XCUIElement {
             }
         }
     }
+
+    /// Автоматический скролл до элемента
+    /// Дистанция одной прокрутки - половина высоты элемента, к которому применяется метод
+    /// - parameters:
+    ///     - element: Искомый элемент.
+    ///     - withDirection: Направление скролла
+    func dsl_scrollTo(element: XCUIElement, withDirection scrollDirection: GestureDirection, file: StaticString = #file, line: UInt = #line) {
+        XCTContext.runActivity(named: "Скролл до элемента \(element)") { _ in
+            let maxScrolls = 10
+            for _ in 0 ..< maxScrolls {
+                if element.dsl_waitForExistence(timeout: 3) && element.dsl_waitForHittable(timeout: 3){
+                    return
+                }
+                
+                let startCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                let endCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: scrollDirection == .up ? 1 : 0))
+                startCoord.dsl_press(forDuration: 0, thenDragTo: endCoord)
+            }
+            XCTFail("Не удалось доскроллить до элемента \(element) за \(maxScrolls) попыток", file: file, line: line)
+        }
+    }
     
     public enum KeyboardLayout: String {
         case RU
@@ -365,11 +386,17 @@ extension XCUIElement {
         case Number
     }
     
+    /// Направление свайпа
     public enum Direction: Int {
         case up
         case down
         case left
         case right
+    }
+    
+    /// Направление скролла
+    public enum GestureDirection {
+        case up, down
     }
     
     public enum Action: String {
