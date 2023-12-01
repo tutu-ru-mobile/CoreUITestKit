@@ -380,7 +380,7 @@ extension XCUIElement {
     /// - parameters:
     ///     - element: Искомый элемент.
     ///     - withDirection: Направление скролла
-    func dsl_scrollTo(element: XCUIElement, withDirection scrollDirection: GestureDirection, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_scrollTo(element: XCUIElement, withDirection scrollDirection: GestureDirection, file: StaticString = #file, line: UInt = #line) {
         XCTContext.runActivity(named: "Скролл до элемента \(element)") { _ in
             let maxScrolls = 10
             for _ in 0 ..< maxScrolls {
