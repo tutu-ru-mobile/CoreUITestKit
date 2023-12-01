@@ -123,14 +123,15 @@ extension XCUIElement {
         }
     }
 
-    public func dsl_typeText(_ text: String, needWait: Bool? = false, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_typeText(_ text: String, needWait: Bool = false, file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Ввод текста \(text) в \(String(describing: resourceName))") { _ in
-            if needWait == true {
+            if needWait {
                 guard dsl_waitForHittable(timeout: 5) else {
-                    XCTFail("Элемент \(String(describing: resourceName)) не готов для нажатия",
-                            file: file,
-                            line: line
+                    XCTFail(
+                        "Элемент \(String(describing: resourceName)) не готов для нажатия",
+                        file: file,
+                        line: line
                     )
                     return
                 }
@@ -145,14 +146,15 @@ extension XCUIElement {
         }
     }
     
-    public func dsl_tap(needWait: Bool? = false, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_tap(needWait: Bool = false, file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName))") { _ in
-            if needWait == true {
+            if needWait {
                 guard dsl_waitForHittable(timeout: 5) else {
-                    XCTFail("Элемент \(String(describing: resourceName)) не готов для нажатия",
-                             file: file,
-                             line: line
+                    XCTFail(
+                        "Элемент \(String(describing: resourceName)) не готов для нажатия",
+                        file: file,
+                        line: line
                     )
                     return
                 }
@@ -167,14 +169,15 @@ extension XCUIElement {
         }
     }
     
-    public func dsl_doubleTap(needWait: Bool? = false, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_doubleTap(needWait: Bool = false, file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Двойной Тап по элементу \(String(describing: resourceName))") { _ in
-            if needWait == true {
+            if needWait {
                 guard dsl_waitForHittable(timeout: 5) else {
-                    XCTFail("Элемент \(String(describing: resourceName)) не готов для нажатия",
-                             file: file,
-                             line: line
+                    XCTFail(
+                        "Элемент \(String(describing: resourceName)) не готов для нажатия",
+                        file: file,
+                        line: line
                     )
                     return
                 }
@@ -201,14 +204,7 @@ extension XCUIElement {
     public func dsl_tap(withNumberOfTaps: Int) {
         let resourceName = self.description
         
-        let numberOfTapsText: String
-        if withNumberOfTaps >= 2 && withNumberOfTaps <= 4 {
-            numberOfTapsText = "\(withNumberOfTaps) раза"
-        } else {
-            numberOfTapsText = "\(withNumberOfTaps) раз"
-        }
-        
-        XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName)) \(numberOfTapsText)") { _ in
+        XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName)) \(withNumberOfTaps) раз(а)") { _ in
             tap(withNumberOfTaps: withNumberOfTaps, numberOfTouches: 1)
         }
     }
@@ -358,9 +354,10 @@ extension XCUIElement {
         XCTContext.runActivity(named: "Удаление текста '\(String(describing: resourceName))' через клавиатуру") {  _ in
             tap()
             guard let stringValue = value as? String else {
-                XCTFail("Tried to clear and enter text into a non string value!",
-                file: file,
-                line: line
+                XCTFail(
+                    "Tried to clear and enter text into a non string value!",
+                    file: file,
+                    line: line
                 )
                 return
             }
@@ -384,7 +381,7 @@ extension XCUIElement {
         XCTContext.runActivity(named: "Скролл до элемента \(element)") { _ in
             let maxScrolls = 10
             for _ in 0 ..< maxScrolls {
-                if element.dsl_waitForExistence(timeout: 3) && element.dsl_waitForHittable(timeout: 3){
+                if element.dsl_waitForExistence(timeout: 3) && element.dsl_waitForHittable(timeout: 3) {
                     return
                 }
                 
@@ -392,7 +389,11 @@ extension XCUIElement {
                 let endCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: scrollDirection == .up ? 1 : 0))
                 startCoord.dsl_press(forDuration: 0, thenDragTo: endCoord)
             }
-            XCTFail("Не удалось доскроллить до элемента \(element) за \(maxScrolls) попыток", file: file, line: line)
+            XCTFail(
+                "Не удалось доскроллить до элемента \(element) за \(maxScrolls) раз(а)",
+                file: file,
+                line: line
+            )
         }
     }
     
