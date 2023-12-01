@@ -197,6 +197,22 @@ extension XCUIElement {
         }
     }
     
+    ///  Мульти Тап
+    public func dsl_tap(withNumberOfTaps: Int) {
+        let resourceName = self.description
+        
+        let numberOfTapsText: String
+        if withNumberOfTaps >= 2 && withNumberOfTaps <= 4 {
+            numberOfTapsText = "\(withNumberOfTaps) раза"
+        } else {
+            numberOfTapsText = "\(withNumberOfTaps) раз"
+        }
+        
+        XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName)) \(numberOfTapsText)") { _ in
+            tap(withNumberOfTaps: withNumberOfTaps, numberOfTouches: 1)
+        }
+    }
+    
     /// Стандартный свайп
     public func dsl_swipe(_ direction: Direction) {
         switch direction {
