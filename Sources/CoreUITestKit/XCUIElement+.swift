@@ -1,3 +1,6 @@
+//
+// Copyright © 2023 LLC "Globus Media". All rights reserved.
+//
 
 import XCTest
 import Foundation
@@ -377,9 +380,8 @@ extension XCUIElement {
     /// - parameters:
     ///     - element: Искомый элемент.
     ///     - withDirection: Направление скролла
-    public func dsl_scrollTo(element: XCUIElement, withDirection scrollDirection: GestureDirection, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_scrollTo(element: XCUIElement, withDirection scrollDirection: GestureDirection, maxScrolls: Int = 10, file: StaticString = #file, line: UInt = #line) {
         XCTContext.runActivity(named: "Скролл до элемента \(element)") { _ in
-            let maxScrolls = 10
             for _ in 0 ..< maxScrolls {
                 if element.dsl_waitForExistence(timeout: 3) && element.dsl_waitForHittable(timeout: 3) {
                     return

@@ -1,3 +1,6 @@
+//
+// Copyright © 2023 LLC "Globus Media". All rights reserved.
+//
 
 import XCTest
 import Foundation
