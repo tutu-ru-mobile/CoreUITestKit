@@ -1,36 +1,40 @@
+//
+// Copyright © 2023 LLC "Globus Media". All rights reserved.
+//
 
 import XCTest
+import Foundation
 
 extension XCUIElement {
-    var dsl_exists: Bool {
+    public var dsl_exists: Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Проверка элемента \(String(describing: resourceName)) на отображение") { _ in
             return exists
         }
     }
     
-    var dsl_isHittable: Bool {
+    public var dsl_isHittable: Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Проверка элемента \(String(describing: resourceName)) на готовность нажатия") { _ in
             return isHittable
         }
     }
     
-    var dsl_isEnabled: Bool {
+    public var dsl_isEnabled: Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Проверка элемента \(String(describing: resourceName)) на доступность") { _ in
             return isEnabled
         }
     }
     
-    var dsl_isSelected: Bool {
+    public var dsl_isSelected: Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Проверка элемента \(String(describing: resourceName)) на выбираемость") { _ in
             return isSelected
         }
     }
     
-    public var stringValue: String? {
+    public var dsl_stringValue: String? {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Получить значение элемента '\(String(describing: resourceName))'") { _ in
             return self.value as? String
@@ -60,7 +64,7 @@ extension XCUIElement {
     }
     
     /// Выбор  элемента по тексту в пикере
-    public func dsl_adjust(toPickerWheelValue: String, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_adjust(toPickerWheelValue: String) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по тексту '\(toPickerWheelValue)' в  елементе \(String(describing: resourceName))") { _ in
             adjust(toPickerWheelValue: toPickerWheelValue)
@@ -118,62 +122,93 @@ extension XCUIElement {
                 object: self
             )
             let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
-            let checkHittable = !self.dsl_isHittable || result == .completed
-            return checkHittable
+            return self.dsl_isHittable || (result == .completed)
         }
     }
-    
-    public func dsl_typeText(_ text: String, file: StaticString = #file, line: UInt = #line) {
+
+    public func dsl_typeText(_ text: String, needWait: Bool = false, file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Ввод текста \(text) в \(String(describing: resourceName))") { _ in
-            guard dsl_isHittable else {
-                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия",
-                file: file,
-                line: line
-                )
-                return
+            if needWait {
+                guard dsl_waitForHittable(timeout: 5) else {
+                    XCTFail(
+                        "Элемент \(String(describing: resourceName)) не готов для нажатия",
+                        file: file,
+                        line: line
+                    )
+                    return
+                }
+                XCTContext.runActivity(named: "Ввод текста \(text)") { _ in
+                    typeText(text)
+                }
+            } else {
+                XCTContext.runActivity(named: "Ввод текста \(text)") { _ in
+                    typeText(text)
+                }
             }
-            typeText(text)
         }
     }
     
-    public func dsl_tap(file: StaticString = #file, line: UInt = #line) {
+    public func dsl_tap(needWait: Bool = false, file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName))") { _ in
-            guard dsl_isHittable else {
-                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия",
-                file: file,
-                line: line
-                )
-                return
-            }
-            XCTContext.runActivity(named: "Тап") { _ in
-                tap()
+            if needWait {
+                guard dsl_waitForHittable(timeout: 5) else {
+                    XCTFail(
+                        "Элемент \(String(describing: resourceName)) не готов для нажатия",
+                        file: file,
+                        line: line
+                    )
+                    return
+                }
+                XCTContext.runActivity(named: "Тап") { _ in
+                    tap()
+                }
+            } else {
+                XCTContext.runActivity(named: "Тап") { _ in
+                    tap()
+                }
             }
         }
     }
     
-    public func dsl_doubleTap(file: StaticString = #file, line: UInt = #line) {
+    public func dsl_doubleTap(needWait: Bool = false, file: StaticString = #file, line: UInt = #line) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Двойной Тап по элементу \(String(describing: resourceName))") { _ in
-            guard dsl_isHittable else {
-                XCTFail ("Элемент \(String(describing: resourceName)) не готов для нажатия",
-                file: file,
-                line: line
-                )
-                return
-            }
-            XCTContext.runActivity(named: "Тап") { _ in
-                doubleTap()
+            if needWait {
+                guard dsl_waitForHittable(timeout: 5) else {
+                    XCTFail(
+                        "Элемент \(String(describing: resourceName)) не готов для нажатия",
+                        file: file,
+                        line: line
+                    )
+                    return
+                }
+                XCTContext.runActivity(named: "Двойной Тап") { _ in
+                    doubleTap()
+                }
+            } else {
+                XCTContext.runActivity(named: "Двойной Тап") { _ in
+                    doubleTap()
+                }
             }
         }
     }
     
-    ///  Тап по notHittable элементу
-    public func dsl_forceTap(file: StaticString = #file, line: UInt = #line) {
+    ///  Принудительный Тап  по координатам
+    public func dsl_forceTap() {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по скрытому элементу \(String(describing: resourceName))") { _ in
-            tap()
+            coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.0)).tap()
+        }
+    }
+    
+    ///  Мульти Тап
+    public func dsl_tap(withNumberOfTaps: Int) {
+        let resourceName = self.description
+        
+        XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName)) \(withNumberOfTaps) раз(а)") { _ in
+            tap(withNumberOfTaps: withNumberOfTaps, numberOfTouches: 1)
         }
     }
     
@@ -251,7 +286,7 @@ extension XCUIElement {
     public func dsl_clearText() {
         let resourceName = self.description
         XCTContext.runActivity(named: "Очистка текста в элементе \(String(describing: resourceName))") { _ in
-            guard let stringValue = self.stringValue else { return }
+            guard let stringValue = self.dsl_stringValue else { return }
             var deleteString = String()
             for _ in stringValue {
                 deleteString += XCUIKeyboardKey.delete.rawValue
@@ -322,9 +357,10 @@ extension XCUIElement {
         XCTContext.runActivity(named: "Удаление текста '\(String(describing: resourceName))' через клавиатуру") {  _ in
             tap()
             guard let stringValue = value as? String else {
-                XCTFail("Tried to clear and enter text into a non string value!",
-                file: file,
-                line: line
+                XCTFail(
+                    "Tried to clear and enter text into a non string value!",
+                    file: file,
+                    line: line
                 )
                 return
             }
@@ -338,6 +374,30 @@ extension XCUIElement {
             }
         }
     }
+
+    /// Автоматический скролл до элемента
+    /// Дистанция одной прокрутки - половина высоты элемента, к которому применяется метод
+    /// - parameters:
+    ///     - element: Искомый элемент.
+    ///     - withDirection: Направление скролла
+    public func dsl_scrollTo(element: XCUIElement, withDirection scrollDirection: GestureDirection, maxScrolls: Int = 10, file: StaticString = #file, line: UInt = #line) {
+        XCTContext.runActivity(named: "Скролл до элемента \(element)") { _ in
+            for _ in 0 ..< maxScrolls {
+                if element.dsl_waitForExistence(timeout: 3) && element.dsl_waitForHittable(timeout: 3) {
+                    return
+                }
+                
+                let startCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                let endCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: scrollDirection == .up ? 1 : 0))
+                startCoord.dsl_press(forDuration: 0, thenDragTo: endCoord)
+            }
+            XCTFail(
+                "Не удалось доскроллить до элемента \(element) за \(maxScrolls) раз(а)",
+                file: file,
+                line: line
+            )
+        }
+    }
     
     public enum KeyboardLayout: String {
         case RU
@@ -345,11 +405,17 @@ extension XCUIElement {
         case Number
     }
     
+    /// Направление свайпа
     public enum Direction: Int {
         case up
         case down
         case left
         case right
+    }
+    
+    /// Направление скролла
+    public enum GestureDirection {
+        case up, down
     }
     
     public enum Action: String {
@@ -361,6 +427,9 @@ extension XCUIElement {
         case waitForExistence
         case waitForHidden
         case waitForHittable
+        case waitForExistenceLong
+        case waitForHiddenLong
+        case waitForHittableLong
     }
 
     
@@ -382,6 +451,12 @@ extension XCUIElement {
             return dsl_waitForHidden(timeout: 5)
         case .waitForHittable:
             return dsl_waitForHittable(timeout: 5)
+        case .waitForExistenceLong:
+            return dsl_waitForExistence(timeout: 45)
+        case .waitForHiddenLong:
+            return dsl_waitForHidden(timeout: 45)
+        case .waitForHittableLong:
+            return dsl_waitForHittable(timeout: 45)
         }
     }
 }
