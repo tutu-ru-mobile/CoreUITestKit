@@ -64,7 +64,7 @@ extension XCUIElement {
     }
     
     /// Выбор  элемента по тексту в пикере
-    public func dsl_adjust(toPickerWheelValue: String, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_adjust(toPickerWheelValue: String) {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по тексту '\(toPickerWheelValue)' в  елементе \(String(describing: resourceName))") { _ in
             adjust(toPickerWheelValue: toPickerWheelValue)
@@ -114,7 +114,7 @@ extension XCUIElement {
     }
     
     @discardableResult
-    public func dsl_waitForHittable(timeout: Double, file: StaticString = #file, line: UInt = #line) -> Bool {
+    public func dsl_waitForHittable(timeout: Double) -> Bool {
         let resourceName = self.description
         return XCTContext.runActivity(named: "Подождать, пока элемент \(String(describing: resourceName)) станет кликабельным") { _ in
             let expectation = XCTNSPredicateExpectation(
@@ -196,7 +196,7 @@ extension XCUIElement {
     }
     
     ///  Принудительный Тап  по координатам
-    public func dsl_forceTap(file: StaticString = #file, line: UInt = #line) {
+    public func dsl_forceTap() {
         let resourceName = self.description
         XCTContext.runActivity(named: "Тап по скрытому элементу \(String(describing: resourceName))") { _ in
             coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.0)).tap()
