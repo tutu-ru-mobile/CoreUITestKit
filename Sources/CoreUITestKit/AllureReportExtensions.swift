@@ -3,6 +3,7 @@
 //
 
 import XCTest
+import UIKit
 
 // MARK: Методы для адаптации юай тестов к выгрузке в Allure ТестОпс
 /// Наименование модуля содержащего тесты. В случае чекаута - "Чекаут iOS Autotests"
@@ -31,7 +32,7 @@ public func step(_ name: String, step: () -> Void) {
 public func deviceInfo() {
     description(
         name: "Device info",
-        value: "Model name: Iphone11, Version OS: iOS 16.2"
+        value: "Model name: \(UIDevice.current.name), Version OS: \(UIDevice.current.systemVersion)"
     )
 }
 
