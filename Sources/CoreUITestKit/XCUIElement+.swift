@@ -304,10 +304,15 @@ extension XCUIElement {
             } else {
                 dsl_tap()
             }
-            
             dsl_clearText()
-            app.dsl_typeText(text)
-            app.dsl_swipe(.down)
+            UIPasteboard.general.string = text
+            dsl_doubleTap()
+            XCTAssertTrue(
+                app.menuItems["Вставить"].dsl_waitForExistence(timeout: 1),
+                "Не удалось вставить текст \(text)"
+            )
+            app.menuItems["Вставить"].dsl_tap()
+            app.toolbars.buttons["Готово"].firstMatch.dsl_tap()
         }
     }
     
@@ -368,7 +373,14 @@ extension XCUIElement {
     ///     - element: Искомый элемент.
     ///     - withDirection: Направление скролла
     ///     - maxScrolls: Кол-во скроллов (по умолчанию 10 раз)
-    public func dsl_scrollTo(elementQuery: XCUIElementQuery = XCUIApplication().scrollViews, element: XCUIElement, withDirection scrollDirection: GestureDirection, maxScrolls: Int = 10, file: StaticString = #file, line: UInt = #line) {
+    public func dsl_scrollTo(
+        elementQuery: XCUIElementQuery = XCUIApplication().scrollViews,
+        element: XCUIElement,
+        withDirection scrollDirection: GestureDirection,
+        maxScrolls: Int = 10,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         
         XCTContext.runActivity(named: "Скролл до элемента \(element)") { _ in
             
@@ -399,13 +411,13 @@ extension XCUIElement {
         }
     }
     
-    private func scrollHorizontally(view: XCUIElement, from startX: CGFloat, to endX: CGFloat) {
+    private func _scrollHorizontally(view: XCUIElement, from startX: CGFloat, to endX: CGFloat) {
         let startCoord = view.coordinate(withNormalizedOffset: CGVector(dx: startX, dy: 0.5))
         let endCoord = view.coordinate(withNormalizedOffset: CGVector(dx: endX, dy: 0.5))
         startCoord.dsl_press(forDuration: 0.01, thenDragTo: endCoord)
     }
 
-    private func scrollVertically(scrollDirection: GestureDirection) {
+    private func _scrollVertically(scrollDirection: GestureDirection) {
         let startCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
         let endCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: scrollDirection == .up ? 1 : 0))
         startCoord.dsl_press(forDuration: 0, thenDragTo: endCoord)
