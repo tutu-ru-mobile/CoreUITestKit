@@ -392,14 +392,11 @@ extension XCUIElement {
                 }
                 
                 switch scrollDirection {
-                case .left:
-                    scrollHorizontally(view: view, from: 0.1, to: 0.9)
-                    
-                case .right:
-                    scrollHorizontally(view: view, from: 0.9, to: 0.1)
+                case .left, .right:
+                    _scrollHorizontally(view: view, scrollDirection: scrollDirection)
                     
                 case .up, .down:
-                    scrollVertically(scrollDirection: scrollDirection)
+                    _scrollVertically(scrollDirection: scrollDirection)
                 }
             }
             
@@ -411,17 +408,30 @@ extension XCUIElement {
         }
     }
     
-    private func _scrollHorizontally(view: XCUIElement, from startX: CGFloat, to endX: CGFloat) {
-        let startCoord = view.coordinate(withNormalizedOffset: CGVector(dx: startX, dy: 0.5))
-        let endCoord = view.coordinate(withNormalizedOffset: CGVector(dx: endX, dy: 0.5))
+    private func _scrollHorizontally(view: XCUIElement, scrollDirection: GestureDirection2) {
+        let startCoord = view.coordinate(withNormalizedOffset: CGVector(
+            dx: scrollDirection == .left ? 0.1 : 0.9,
+            dy: 0.5
+        ))
+        let endCoord = view.coordinate(withNormalizedOffset: CGVector(
+            dx: scrollDirection == .left ? 0.9 : 0.1,
+            dy: 0.5
+        ))
         startCoord.dsl_press(forDuration: 0.01, thenDragTo: endCoord)
     }
 
-    private func _scrollVertically(scrollDirection: GestureDirection) {
-        let startCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-        let endCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: scrollDirection == .up ? 1 : 0))
+    private func _scrollVertically(scrollDirection: GestureDirection2) {
+        let startCoord = coordinate(withNormalizedOffset: CGVector(
+            dx: 0.5,
+            dy: 0.5
+        ))
+        let endCoord = coordinate(withNormalizedOffset: CGVector(
+            dx: 0.5,
+            dy: scrollDirection == .up ? 1 : 0
+        ))
         startCoord.dsl_press(forDuration: 0, thenDragTo: endCoord)
     }
+    
     
     public enum KeyboardLayout: String {
         case RU
