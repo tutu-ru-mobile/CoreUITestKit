@@ -408,7 +408,7 @@ extension XCUIElement {
         }
     }
     
-    private func _scrollHorizontally(view: XCUIElement, scrollDirection: GestureDirection2) {
+    private func _scrollHorizontally(view: XCUIElement, scrollDirection: GestureDirection) {
         let startCoord = view.coordinate(withNormalizedOffset: CGVector(
             dx: scrollDirection == .left ? 0.1 : 0.9,
             dy: 0.5
@@ -420,7 +420,7 @@ extension XCUIElement {
         startCoord.dsl_press(forDuration: 0.01, thenDragTo: endCoord)
     }
 
-    private func _scrollVertically(scrollDirection: GestureDirection2) {
+    private func _scrollVertically(scrollDirection: GestureDirection) {
         let startCoord = coordinate(withNormalizedOffset: CGVector(
             dx: 0.5,
             dy: 0.5
