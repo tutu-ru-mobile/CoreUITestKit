@@ -66,7 +66,7 @@ extension XCUIElement {
     /// Выбор  элемента по тексту в пикере
     public func dsl_adjust(toPickerWheelValue: String) {
         let resourceName = self.description
-        XCTContext.runActivity(named: "Тап по тексту '\(toPickerWheelValue)' в  елементе \(String(describing: resourceName))") { _ in
+        XCTContext.runActivity(named: "Тап по тексту '\(toPickerWheelValue)' в элементе \(String(describing: resourceName))") { _ in
             adjust(toPickerWheelValue: toPickerWheelValue)
         }
     }
@@ -206,7 +206,6 @@ extension XCUIElement {
     ///  Мульти Тап
     public func dsl_tap(withNumberOfTaps: Int) {
         let resourceName = self.description
-        
         XCTContext.runActivity(named: "Тап по элементу \(String(describing: resourceName)) \(withNumberOfTaps) раз(а)") { _ in
             tap(withNumberOfTaps: withNumberOfTaps, numberOfTouches: 1)
         }
@@ -239,25 +238,25 @@ extension XCUIElement {
         switch direction {
         case .up:
             XCTContext.runActivity(named: "Свайп вверх \(times) раз") { _ in
-                for _ in 0...times {
+                for _ in 0..<times {
                     swipeUp(velocity: velocity)
                 }
             }
         case .down:
             XCTContext.runActivity(named: "Свайп вниз \(times) раз") { _ in
-                for _ in 0...times {
+                for _ in 0..<times {
                     swipeDown(velocity: velocity)
                 }
             }
         case .left:
             XCTContext.runActivity(named: "Свайп влево \(times) раз") { _ in
-                for _ in 0...times {
+                for _ in 0..<times {
                     swipeLeft(velocity: velocity)
                 }
             }
         case .right:
             XCTContext.runActivity(named: "Свайп вправо \(times) раз") { _ in
-                for _ in 0...times {
+                for _ in 0..<times {
                     swipeRight(velocity: velocity)
                 }
             }
@@ -306,22 +305,14 @@ extension XCUIElement {
                 dsl_tap()
             }
             dsl_clearText()
-
-            // Ci капризничает, и в некоторых словах делает автозамену -> тесты падают
-            // Для стабильности, на 16 оси вставляем текст а не печатаем
-            if #available(iOS 16.0, *) {
-                UIPasteboard.general.string = text
-                dsl_doubleTap()
-                XCTAssertTrue(
-                    app.menuItems["Вставить"].dsl_waitForExistence(timeout: 1),
-                    "Не удалось вставить текст \(text)"
-                )
-                app.menuItems["Вставить"].dsl_tap()
-                app.toolbars.buttons["Готово"].firstMatch.dsl_tap()
-            } else {
-                app.dsl_typeText(text)
-                app.dsl_swipe(.down)
-            }
+            UIPasteboard.general.string = text
+            dsl_doubleTap()
+            XCTAssertTrue(
+                app.menuItems["Вставить"].dsl_waitForExistence(timeout: 1),
+                "Не удалось вставить текст \(text)"
+            )
+            app.menuItems["Вставить"].dsl_tap()
+            app.toolbars.buttons["Готово"].firstMatch.dsl_tap()
         }
     }
     
@@ -378,19 +369,37 @@ extension XCUIElement {
     /// Автоматический скролл до элемента
     /// Дистанция одной прокрутки - половина высоты элемента, к которому применяется метод
     /// - parameters:
+    ///     - elementQuery: выбор компонента карусели (опционально)
     ///     - element: Искомый элемент.
     ///     - withDirection: Направление скролла
-    public func dsl_scrollTo(element: XCUIElement, withDirection scrollDirection: GestureDirection, maxScrolls: Int = 10, file: StaticString = #file, line: UInt = #line) {
+    ///     - maxScrolls: Кол-во скроллов (по умолчанию 10 раз)
+    public func dsl_scrollTo(
+        elementQuery: XCUIElementQuery = XCUIApplication().scrollViews,
+        element: XCUIElement,
+        withDirection scrollDirection: GestureDirection,
+        maxScrolls: Int = 10,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        
         XCTContext.runActivity(named: "Скролл до элемента \(element)") { _ in
-            for _ in 0 ..< maxScrolls {
+            
+            let view = elementQuery.firstMatch
+            
+            for _ in 1...maxScrolls {
                 if element.dsl_waitForExistence(timeout: 3) && element.dsl_waitForHittable(timeout: 3) {
                     return
                 }
                 
-                let startCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-                let endCoord = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: scrollDirection == .up ? 1 : 0))
-                startCoord.dsl_press(forDuration: 0, thenDragTo: endCoord)
+                switch scrollDirection {
+                case .left, .right:
+                    _scrollHorizontally(view: view, scrollDirection: scrollDirection)
+                    
+                case .up, .down:
+                    _scrollVertically(scrollDirection: scrollDirection)
+                }
             }
+            
             XCTFail(
                 "Не удалось доскроллить до элемента \(element) за \(maxScrolls) раз(а)",
                 file: file,
@@ -398,6 +407,31 @@ extension XCUIElement {
             )
         }
     }
+    
+    private func _scrollHorizontally(view: XCUIElement, scrollDirection: GestureDirection) {
+        let startCoord = view.coordinate(withNormalizedOffset: CGVector(
+            dx: scrollDirection == .left ? 0.1 : 0.9,
+            dy: 0.5
+        ))
+        let endCoord = view.coordinate(withNormalizedOffset: CGVector(
+            dx: scrollDirection == .left ? 0.9 : 0.1,
+            dy: 0.5
+        ))
+        startCoord.dsl_press(forDuration: 0.01, thenDragTo: endCoord)
+    }
+
+    private func _scrollVertically(scrollDirection: GestureDirection) {
+        let startCoord = coordinate(withNormalizedOffset: CGVector(
+            dx: 0.5,
+            dy: 0.5
+        ))
+        let endCoord = coordinate(withNormalizedOffset: CGVector(
+            dx: 0.5,
+            dy: scrollDirection == .up ? 1 : 0
+        ))
+        startCoord.dsl_press(forDuration: 0, thenDragTo: endCoord)
+    }
+    
     
     public enum KeyboardLayout: String {
         case RU
@@ -415,7 +449,10 @@ extension XCUIElement {
     
     /// Направление скролла
     public enum GestureDirection {
-        case up, down
+        case left
+        case right
+        case up
+        case down
     }
     
     public enum Action: String {
@@ -432,7 +469,6 @@ extension XCUIElement {
         case waitForHittableLong
     }
 
-    
     public func checkAction(_ action: Action) -> Bool {
         switch action {
         case .exists:
